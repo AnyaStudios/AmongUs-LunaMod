@@ -14,7 +14,7 @@ public static class DiscordStatus
         if (activity == null) return;
 
         var isBeta = false;
-        string details = $"LunaMod v0.2" + " | " + (isBeta ? " (Beta)" : " (Dev)");
+        string details = $"LunaMod v0.3" + " | " + (isBeta ? " (Beta)" : " (Dev)");
         activity.Details = details;
 
         try
