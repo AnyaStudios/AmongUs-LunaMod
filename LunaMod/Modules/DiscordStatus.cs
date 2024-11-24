@@ -15,10 +15,10 @@ public static class DiscordStatus
 
         var isBeta = false;
 
-        string details = $"LunaMod v0.6" + " | " + (isBeta ? " (Beta)" : " (Dev)");
+        string details = $"LunaMod v0.7" + " | " + (isBeta ? " (Beta)" : " (Dev)");
         try
         {
-            if (activity.State == "In Menu")
+            if (activity.State == "In Menus")
             {
                 int maxPlayers = GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers;
                 var lobbyCode = GameStartManager.Instance.GameRoomNameCode.text;
