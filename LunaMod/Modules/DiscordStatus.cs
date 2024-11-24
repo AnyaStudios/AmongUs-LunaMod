@@ -1,5 +1,7 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using HarmonyLib;
+using LunaMod.Utilities;
 using UnityEngine;
 
 namespace LunaMod.Modules;
@@ -12,14 +14,29 @@ public static class DiscordStatus
         if (activity == null) return;
 
         var isBeta = false;
-        int maxPlayers = GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers;
-        var lobbyCode = GameStartManager.Instance.GameRoomNameCode.text;
-        var platform = Application.platform;
 
-        string details = $"LunaMod v0.5" + " | " + (isBeta ? " (Beta)" : " (Dev)");
-        string state = $"Players: {maxPlayers} | LobbyCode {lobbyCode} | Platform: {platform}";
+        string details = $"LunaMod v0.6" + " | " + (isBeta ? " (Beta)" : " (Dev)");
+        try
+        {
+            if (activity.State == "In Menu")
+            {
+                int maxPlayers = GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers;
+                var lobbyCode = GameStartManager.Instance.GameRoomNameCode.text;
 
-        activity.Details = details;
-        activity.State = state;
+                details += $" Players: {maxPlayers} | LobbyCode {lobbyCode}";
+            }
+            else if (activity.State == "In Game")
+            {
+                if (MeetingHud.Instance)
+                {
+                    details += " | \nIn Meeting";
+                }
+            }
+            activity.Assets.SmallText = "LunaMod Made By AnyaStudios";
+        }
+        catch (Exception e)
+        {
+            LunaLogger.Error($"Error updating Discord activity: {e.Message}\nStackTrace {e.StackTrace}");
+        }
     }
 }
