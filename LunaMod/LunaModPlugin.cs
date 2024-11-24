@@ -19,5 +19,6 @@ public class LunaModPlugin : BasePlugin
     public override void Load()
     {
         LunaLogger.Message("LunaMod is now loading!");
+        Harmony.PatchAll();
     }
 }
