@@ -19,7 +19,7 @@ public static class DiscordStatus
 
         try
         {
-            if (activity.State == "In Menus")
+            if (activity.State == "In Lobby")
             {
                 int maxPlayers = GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers;
                 var lobbyCode = GameStartManager.Instance.GameRoomNameCode.text;
