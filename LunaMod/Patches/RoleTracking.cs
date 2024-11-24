@@ -1,0 +1,119 @@
+﻿using HarmonyLib;
+using LunaMod.Utilities;
+using Reactor.Utilities.Extensions;
+using TMPro;
+using UnityEngine;
+
+namespace LunaMod.Patches;
+
+[HarmonyPatch()]
+public static class RoleTracking
+{
+    [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
+    private static class HudManager_Update
+    {
+        private static void Postfix(HudManager __instance)
+        {
+            if (LobbyBehaviour.Instance) return;
+            if (GameManager.Instance.IsHideAndSeek()) return;
+            if (!ModConfig.ShowTeam.Value) return;
+
+            if (PlayerControl.LocalPlayer.Data.IsDead && !ModCompatibility.ShouldTurnOffTracking)
+            {
+                foreach (var player in PlayerControl.AllPlayerControls)
+                {
+                    if (player.AmOwner) continue;
+                    player.cosmetics.nameText.color = Color.white;
+
+                    if (player.cosmetics.showColorBlindText == true)
+                    {
+                        player.cosmetics.colorBlindText.gameObject.transform.localPosition = new Vector3(0, -1.1f, 0);
+                        player.cosmetics.colorBlindText.text = $"<size=70%>{player.cosmetics.GetColorBlindText()}</size>";
+                    }
+                    TextMeshPro roleText = null;
+
+                    if (!player.gameObject.transform.FindChild("Names").FindChild("RoleText_TMP"))
+                    {
+                        var text = GameObject.Instantiate(player.gameObject.transform.FindChild("Names").FindChild("ColorblindName_TMP"));
+                        var tmp = text.GetComponent<TextMeshPro>();
+                        text.gameObject.transform.SetParent(player.gameObject.transform.FindChild("Names").transform);
+                        text.gameObject.transform.localPosition = Vector3.zero;
+                        text.transform.localPosition = new Vector3(0f, -0.25f, 0);
+                        tmp.text = "Role";
+
+                        roleText = tmp;
+                    }
+
+                    if (roleText != null)
+                    {
+                        if (ModConfig.ShowRole.Value)
+                        {
+                            player.cosmetics.nameText.gameObject.transform.localPosition = Vector3.zero;
+                            roleText.gameObject.active = !player.inVent;
+                            roleText.text = $"<size=75%><color=#{player.Data.Role.TeamColor.ToHtmlStringRGBA()}>{player.Data.Role.NiceName}</color></size>";
+                        }
+                        else
+                        {
+                            player.cosmetics.nameText.gameObject.transform.localPosition = Vector3.zero;
+                            roleText.gameObject.active = !player.inVent;
+                            roleText.text = $"<size=75%><color=#{player.Data.Role.TeamColor.ToHtmlStringRGBA()}>{player.Data.Role.TeamType}</color></size>";
+                        }
+                        if (player.Data.Role.TeamType == RoleTeamTypes.Impostor) player.cosmetics.nameText.color = Palette.ImpostorRed;
+                    }
+                }
+            }
+            else
+            {
+                if (ModCompatibility.ShouldTurnOffTracking) LunaLogger.Info($"Mod Compatibility :: Role tracking is disabled, not adding the role text");
+                foreach (var player in PlayerControl.AllPlayerControls)
+                {
+                    if (player.AmOwner) continue;
+
+                    try
+                    {
+                        player.gameObject.transform.FindChild("Names").FindChild("RoleText_TMP").gameObject.active = false;
+                        player.cosmetics.nameText.gameObject.transform.localPosition = new Vector3(0, -0.15f, 0);
+                        player.cosmetics.nameText.color = Color.white;
+                    }
+                    catch
+                    {
+                        // Nothing here to error out too
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerVoteArea), nameof(PlayerVoteArea.SetCosmetics))]
+    private static class PlayerVoteArea_SetCosmetics
+    {
+        private static void Postfix(PlayerVoteArea __instance, ref NetworkedPlayerInfo __playerInfo)
+        {
+            if (ModCompatibility.ShouldTurnOffTracking)
+            {
+                LunaLogger.Info($"Mod Compatibility :: Role tracking is disabled, not adding the meeting role text");
+                return;
+            }
+            if (!ModConfig.ShowTeam.Value) return;
+            if (!PlayerControl.LocalPlayer.Data.IsDead) return;
+
+            var player = __playerInfo.Object;
+            var role = player.Data.Role;
+
+            if (player)
+            {
+                var roleText = GameObject.Instantiate(__instance.ColorBlindName, __instance.ColorBlindName.transform.parent);
+                roleText.name = "RoleText";
+
+                if (ModConfig.ShowRole.Value)
+                {
+                    roleText.text = $"<size=75%><color=#{role.TeamColor.ToHtmlStringRGBA()}>{role.TeamType}</color></size>";
+                }
+                if (player.Data.Role.TeamType == RoleTeamTypes.Impostor) __instance.NameText.color = Palette.ImpostorRed;
+
+                __instance.ColorBlindName.transform.localPosition = __instance.PlayerIcon.transform.localPosition;
+                __instance.ColorBlindName.transform.SetWorldZ(-12.9f);
+            }
+        }
+    }
+}

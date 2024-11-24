@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace LunaMod.Modules;
+namespace LunaMod.Patches;
 
 [HarmonyPatch()]
 public static class DarkMode
