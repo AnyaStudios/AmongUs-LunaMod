@@ -2,7 +2,6 @@
 using Discord;
 using HarmonyLib;
 using LunaMod.Utilities;
-using UnityEngine;
 
 namespace LunaMod.Modules;
 
@@ -15,7 +14,8 @@ public static class DiscordStatus
 
         var isBeta = false;
 
-        string details = $"LunaMod v0.7" + " | " + (isBeta ? " (Beta)" : " (Dev)");
+        string details = $"LunaMod {LunaModPlugin.modVersion}" + " | " + (isBeta ? " (Beta)" : " (Dev)");
+
         try
         {
             if (activity.State == "In Menus")

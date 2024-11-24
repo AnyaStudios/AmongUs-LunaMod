@@ -3,6 +3,7 @@ using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using LunaMod.Utilities;
 using Reactor;
+using Reactor.Utilities;
 
 namespace LunaMod;
 
@@ -19,6 +20,10 @@ public class LunaModPlugin : BasePlugin
     public override void Load()
     {
         LunaLogger.Message("LunaMod is now loading!");
+
+        ModConfig.Bind(Config);
+
+        ReactorCredits.Register<LunaModPlugin>(ReactorCredits.AlwaysShow);
         Harmony.PatchAll();
     }
 }
