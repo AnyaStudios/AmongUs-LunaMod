@@ -13,7 +13,7 @@ namespace LunaMod;
 public class LunaModPlugin : BasePlugin
 {
     public const string Id = "me.anyastudios.lunamod";
-    public const string modVersion = "0.8.1";
+    public const string modVersion = "1.0.0";
 
     public Harmony Harmony { get; } = new(Id);
 
