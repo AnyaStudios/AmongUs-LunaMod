@@ -98,6 +98,6 @@ public class ModUpdater
     private static void NotifyRestart()
     {
         LunaLogger.Info("[LunaMod] Update complete! Please restart the game to apply the newest version.");
-        InfoPopup.Show("Update completed! Please restart the game.");
+        InfoPopup.Show("Update completed! Please restart the game.\nIf this shows again after restarting. Press confirm to continue");
     }
 }
