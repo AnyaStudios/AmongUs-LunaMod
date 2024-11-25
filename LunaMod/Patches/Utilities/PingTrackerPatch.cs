@@ -19,7 +19,6 @@ public static class PingTrackerPatch
         __instance.text.text =
             "<size=100%>Made By <color=#429E9D>AnyaStudios</color>\n" +
             $"LunaMod {LunaModPlugin.modVersion}\n" +
-            "Dev\n" +
             $"Ping: {AmongUsClient.Instance?.Ping}ms";
         __instance.text.outlineWidth = 0.3f;
     }
