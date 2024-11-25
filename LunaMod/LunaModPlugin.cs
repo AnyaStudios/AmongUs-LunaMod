@@ -15,11 +15,14 @@ public class LunaModPlugin : BasePlugin
     public const string Id = "me.anyastudios.lunamod";
     public const string modVersion = "1.0.0";
 
+    public const string devModVersion = "1.0.1-dev";
+
     public Harmony Harmony { get; } = new(Id);
 
     public override void Load()
     {
         LunaLogger.Message("LunaMod is now loading!");
+        LunaLogger.Message($"Current Development Version: {devModVersion}");
 
         ModConfig.Bind(Config);
 
